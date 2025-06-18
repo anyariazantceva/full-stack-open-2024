@@ -1,11 +1,5 @@
-import { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useMatch,
-} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -151,15 +145,27 @@ const App = () => {
   ]);
 
   const match = useMatch("/anecdotes/:id");
+  const navigate = useNavigate();
   const anecdote = match
     ? anecdotes.find((note) => note.id === Number(match.params.id))
     : null;
 
   const [notification, setNotification] = useState("");
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [notification]);
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    navigate("/");
+    setNotification(`A new anecdote ${anecdote.content} created!`);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
