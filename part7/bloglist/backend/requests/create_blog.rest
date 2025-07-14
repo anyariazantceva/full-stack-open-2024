@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/blogs HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFkYW01NSIsImlkIjoiNjc5OGRjYmMxOTE3YmI0NjMxOTEzZGYxIiwiaWF0IjoxNzM4MjI3NzY2LCJleHAiOjE3MzgyMzEzNjZ9.M2tYDON1G1oGb1lz_c7ajU-nQEwvLofg2W9WrAz9CyY
+
+{
+    "title": "New Blog2",
+    "author": "Anna R",
+    "url": "test.blog.com",
+    "likes": 2,
+    "userId": "6798dcbc1917bb4631913df1"
+}
