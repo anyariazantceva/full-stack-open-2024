@@ -8,10 +8,17 @@ import BlogsForm from "./components/BlogsForm";
 import Togglable from "./components/Togglable";
 import { useSelector, useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationsReducer";
+import {
+  initializeBlogs,
+  createBlog as createBlogAction,
+  deleteBlog,
+  setBlogs,
+  updateBlog,
+} from "./reducers/blogsReducer";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const notification = useSelector((state) => state.notification);
   const [user, setUser] = useState(null);
   const blogFormRef = useRef();
@@ -26,14 +33,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService.getAll().then((initialBlogs) => {
-      setBlogs(initialBlogs);
-    });
-  }, []);
-
-  const showAndHideNotification = (notification) => {
-    dispatch(setNotification(notification.message, notification.type));
-  };
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   const handleLogin = async (username, password) => {
     try {
@@ -42,57 +43,45 @@ const App = () => {
         password,
       });
       setUser(user);
-      blogService.getAll().then((blogs) => setBlogs(blogs));
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
+      const blogs = await blogService.getAll();
+      dispatch(setBlogs(blogs));
     } catch (exception) {
-      showAndHideNotification({
-        message: "Wrong username or password",
-        type: "error",
-      });
+      dispatch(setNotification("Wrong username or password", "error"));
     }
   };
 
   const createBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
     try {
-      const createdBlog = await blogService.create(newBlog);
-      setBlogs(blogs.concat(createdBlog));
-      showAndHideNotification({
-        message: `A new blog ${createdBlog.title} by ${createBlog.user.username} added`,
-        type: "success",
-      });
+      await dispatch(createBlogAction(newBlog));
+      dispatch(
+        setNotification(
+          `A new blog ${newBlog.title} by ${createBlog.user.username} added`,
+          "success"
+        )
+      );
     } catch (exception) {
-      showAndHideNotification({
-        message: "Failed to create a blog",
-        type: "error",
-      });
+      dispatch(setNotification("Failed to create a blog", "error"));
     }
-  };
-
-  const sortBlogsByLikes = (blogs) => {
-    return [...blogs].sort((a, b) => b.likes - a.likes);
   };
 
   const likeBlog = async (blog) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 };
-    const likedBlog = await blogService.update(updatedBlog, blog.id);
-    setBlogs((prevBlogs) =>
-      sortBlogsByLikes(
-        prevBlogs.map((b) => (b.id === likedBlog.id ? likedBlog : b))
-      )
-    );
+    try {
+      await dispatch(updateBlog(updatedBlog));
+    } catch (error) {
+      dispatch(setNotification("Failed to like blog", "error"));
+    }
   };
 
   const removeBlog = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
-        await blogService.remove(blog.id);
-        setBlogs((prevBlogs) =>
-          prevBlogs.filter((prevBlog) => prevBlog.id !== blog.id)
-        );
+        await dispatch(deleteBlog(blog.id));
       } catch (error) {
-        console.error("Error deleting blog:", error);
+        dispatch(setNotification("Failed to delete blog", "error"));
       }
     }
   };
