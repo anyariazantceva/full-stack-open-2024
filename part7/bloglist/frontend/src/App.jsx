@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import usersService from "./services/users";
 import LoginForm from "./components/LoginForm";
 import UserBlogs from "./components/UserBlogs";
 import Notification from "./components/Notification";
@@ -12,14 +13,16 @@ import {
   initializeBlogs,
   createBlog as createBlogAction,
   deleteBlog,
-  setBlogs,
   updateBlog,
 } from "./reducers/blogsReducer";
+import { initializeUsers } from "./reducers/usersReducer";
 import { setUser, clearUser } from "./reducers/userReducer";
+import Users from "./components/Users";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
+  const users = useSelector((state) => state.users);
   const notification = useSelector((state) => state.notification);
   const user = useSelector((state) => state.user);
   const blogFormRef = useRef();
@@ -35,6 +38,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs());
+    dispatch(initializeUsers());
   }, [dispatch]);
 
   const handleLogin = async (username, password) => {
@@ -46,8 +50,9 @@ const App = () => {
       dispatch(setUser(user));
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      const blogs = await blogService.getAll();
-      dispatch(setBlogs(blogs));
+      usersService.setToken(user.token);
+      dispatch(initializeUsers());
+      dispatch(initializeBlogs());
     } catch (exception) {
       dispatch(setNotification("Wrong username or password", "error"));
     }
@@ -56,10 +61,11 @@ const App = () => {
   const createBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
     try {
-      await dispatch(createBlogAction(newBlog));
+      const result = await dispatch(createBlogAction(newBlog));
+      const createdBlog = result.payload;
       dispatch(
         setNotification(
-          `A new blog ${newBlog.title} by ${createBlog.user.username} added`,
+          `A new blog ${createdBlog.title} by ${createdBlog.user.username} added`,
           "success"
         )
       );
@@ -110,6 +116,9 @@ const App = () => {
           <Togglable buttonLabel="New blog" ref={blogFormRef}>
             <BlogsForm createBlog={createBlog} />
           </Togglable>
+
+          <h2>Users</h2>
+          <Users users={users} />
         </div>
       )}
     </div>
