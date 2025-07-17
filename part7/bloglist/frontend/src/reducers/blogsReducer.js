@@ -1,56 +1,63 @@
 import blogService from "../services/blogs";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const blogsReducer = (state = [], action) => {
-    switch (action.type) {
-        case "INIT_BLOGS":
-            return action.payload
-        case "CREATE_BLOG":
-            return [...state, action.payload]
-        case "DELETE_BLOG":
-            return state.filter((blog) => blog.id !== action.payload)
-        case "UPDATE_BLOG":
-            return state.map((blog) =>
-                blog.id === action.payload.id ? action.payload : blog
-            );
-        case 'SET_BLOGS':
-            return action.payload;
-        default: return state
-    }
-}
-
-export const initializeBlogs = () => {
-    return async (dispatch) => {
+// Async thunks
+export const initializeBlogs = createAsyncThunk(
+    'blogs/initializeBlogs',
+    async () => {
         const blogs = await blogService.getAll();
-        dispatch({ type: "INIT_BLOGS", payload: blogs });
+        return blogs;
     }
-}
+);
 
-export const setBlogs = (blogs) => {
-    return {
-        type: 'SET_BLOGS',
-        payload: blogs,
-    };
-};
-
-export const createBlog = (blogData) => {
-    return async (dispatch) => {
+export const createBlog = createAsyncThunk(
+    'blogs/createBlog',
+    async (blogData) => {
         const newBlog = await blogService.create(blogData);
-        dispatch({ type: "CREATE_BLOG", payload: newBlog });
-    };
-};
-
-export const deleteBlog = (id) => {
-    return async (dispatch) => {
-        await blogService.remove(id)
-        dispatch({ type: "DELETE_BLOG", payload: id })
+        return newBlog;
     }
-}
+);
+export const deleteBlog = createAsyncThunk(
+    'blogs/deleteBlog',
+    async (id) => {
+        await blogService.remove(id);
+        return id;
+    }
+);
 
-export const updateBlog = (blog) => {
-    return async (dispatch) => {
+export const updateBlog = createAsyncThunk(
+    'blogs/updateBlog',
+    async (blog) => {
         const updated = await blogService.update(blog, blog.id);
-        dispatch({ type: "UPDATE_BLOG", payload: updated });
-    };
-};
+        return updated;
+    }
+);
 
-export default blogsReducer
+const blogsSlice = createSlice({
+    name: 'blogs',
+    initialState: [],
+    reducers: {
+        setBlogs: (state, action) => {
+            return action.payload;
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(initializeBlogs.fulfilled, (_, action) => action.payload)
+            .addCase(createBlog.fulfilled, (state, action) => {
+                state.push(action.payload);
+            })
+            .addCase(deleteBlog.fulfilled, (state, action) => {
+                return state.filter((blog) => blog.id !== action.payload);
+            })
+            .addCase(updateBlog.fulfilled, (state, action) => {
+                return state.map((blog) =>
+                    blog.id === action.payload.id ? action.payload : blog
+                );
+            });
+    }
+});
+
+export const { setBlogs } = blogsSlice.actions;
+
+export default blogsSlice.reducer;
