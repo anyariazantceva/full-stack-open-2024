@@ -1,22 +1,28 @@
+import { Link } from "react-router-dom";
+
 const Users = ({ users }) => {
+  if (!users || users.length === 0) {
+    return <p className="text-gray-500">No users available</p>;
+  }
+
   return (
     <table>
-      {users.length > 0 ? (
-        users.map((user) => (
-          <>
-            <tr key={user.id}>
-              <th></th>
-              <th>blogs created</th>
-            </tr>
-            <tr>
-              <td>{user.name}</td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          </>
-        ))
-      ) : (
-        <p className="text-gray-500">No users available</p>
-      )}
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Blogs created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user) => (
+          <tr key={user.id}>
+            <td>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
+            </td>
+            <td>{user.blogs.length}</td>
+          </tr>
+        ))}
+      </tbody>
     </table>
   );
 };

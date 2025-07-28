@@ -1,12 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import usersService from "./services/users";
-import LoginForm from "./components/LoginForm";
-import UserBlogs from "./components/UserBlogs";
-import Notification from "./components/Notification";
-import BlogsForm from "./components/BlogsForm";
-import Togglable from "./components/Togglable";
+import Home from "./components/Home";
+import User from "./components/User";
 import { useSelector, useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationsReducer";
 import {
@@ -17,7 +14,8 @@ import {
 } from "./reducers/blogsReducer";
 import { initializeUsers } from "./reducers/usersReducer";
 import { setUser, clearUser } from "./reducers/userReducer";
-import Users from "./components/Users";
+
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -99,29 +97,28 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification notification={notification} />
-      {user === null ? (
-        <LoginForm handleLogin={handleLogin} />
-      ) : (
-        <div>
-          <UserBlogs
-            username={user.name}
-            blogs={blogs}
-            handleLogout={handleLogout}
-            likeBlog={likeBlog}
-            removeBlog={removeBlog}
-          />
-          <Togglable buttonLabel="New blog" ref={blogFormRef}>
-            <BlogsForm createBlog={createBlog} />
-          </Togglable>
-
-          <h2>Users</h2>
-          <Users users={users} />
-        </div>
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/users/:id" element={<User users={users} />} />
+        <Route
+          path="/"
+          element={
+            <Home
+              notification={notification}
+              user={user}
+              handleLogin={handleLogin}
+              handleLogout={handleLogout}
+              likeBlog={likeBlog}
+              createBlog={createBlog}
+              blogs={blogs}
+              removeBlog={removeBlog}
+              users={users}
+              blogFormRef={blogFormRef}
+            />
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 
