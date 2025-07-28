@@ -1,4 +1,4 @@
-import Blog from './Blog'
+import BlogListItem from "./BlogListItem";
 
 const UserBlogs = ({ username, blogs, handleLogout, likeBlog, removeBlog }) => {
   return (
@@ -6,7 +6,7 @@ const UserBlogs = ({ username, blogs, handleLogout, likeBlog, removeBlog }) => {
       <p>{username}</p>
       {blogs?.length > 0 ? (
         blogs.map((blog) => (
-          <Blog
+          <BlogListItem
             key={blog.id}
             blog={blog}
             likeBlog={likeBlog}
@@ -18,7 +18,7 @@ const UserBlogs = ({ username, blogs, handleLogout, likeBlog, removeBlog }) => {
       )}
       <button onClick={handleLogout}>logout</button>
     </div>
-  )
-}
+  );
+};
 
-export default UserBlogs
+export default UserBlogs;
