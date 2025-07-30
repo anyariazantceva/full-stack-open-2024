@@ -1,10 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const BlogListItem = ({ blog, likeBlog, removeBlog }) => {
-  const [show, setShow] = useState(false);
-  const toggle = () => setShow(!show);
-
+const BlogListItem = ({ blog }) => {
   return (
     <div style={{ border: "1px solid", padding: 10, marginBottom: 5 }}>
       <strong>
@@ -12,18 +8,6 @@ const BlogListItem = ({ blog, likeBlog, removeBlog }) => {
           {blog.title} {blog.author}
         </Link>
       </strong>
-      <button onClick={toggle}>{show ? "hide" : "show"}</button>
-      {show && (
-        <div>
-          <p>{blog.url}</p>
-          <p>
-            likes {blog.likes}
-            <button onClick={() => likeBlog(blog)}>like</button>
-          </p>
-          <p>{blog.user?.name}</p>
-          <button onClick={() => removeBlog(blog)}>remove</button>
-        </div>
-      )}
     </div>
   );
 };

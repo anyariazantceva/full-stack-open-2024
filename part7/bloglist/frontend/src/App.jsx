@@ -17,6 +17,8 @@ import { setUser, clearUser } from "./reducers/userReducer";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Blog from "./components/Blog";
+import UserBlogs from "./components/UserBlogs";
+import Users from "./components/Users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -99,9 +101,42 @@ const App = () => {
 
   return (
     <Router>
+      <div style={{ padding: 10, marginBottom: 5, backgroundColor: "grey" }}>
+        <Link to={"/blogs"}>
+          <span style={{ paddingRight: 10 }}>blogs</span>
+        </Link>
+        <Link to={"/users"}>
+          <span style={{ paddingRight: 10 }}>users</span>
+        </Link>
+        {user && (
+          <>
+            <span>{user.name} logged in</span>
+            <button onClick={handleLogout}>logout</button>
+          </>
+        )}
+      </div>
+
+      <h2>Blog app</h2>
+
       <Routes>
+        <Route
+          path="/blogs"
+          element={
+            <UserBlogs
+              blogs={blogs}
+              blogFormRef={blogFormRef}
+              createBlog={createBlog}
+            />
+          }
+        />
+        <Route path="/users" element={<Users users={users} />} />
         <Route path="/users/:id" element={<User users={users} />} />
-        <Route path="/blogs/:id" element={<Blog blogs={blogs} />} />
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog blogs={blogs} removeBlog={removeBlog} likeBlog={likeBlog} />
+          }
+        />
         <Route
           path="/"
           element={
