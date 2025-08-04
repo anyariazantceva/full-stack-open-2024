@@ -25,9 +25,15 @@ const Blog = ({ blogs, likeBlog, removeBlog }) => {
     fetchComments();
   }, [id]);
 
-  const createComment = (e) => {
+  const createComment = async (e) => {
     e.preventDefault();
-    dispatch(addNewComment({ blogId: id, comment: comment }));
+    const result = await dispatch(
+      addNewComment({ blogId: id, content: comment })
+    );
+    if (result.payload) {
+      setComments((prev) => [...prev, result.payload.comment]);
+      setCommentValue("");
+    }
   };
 
   if (!blog) {

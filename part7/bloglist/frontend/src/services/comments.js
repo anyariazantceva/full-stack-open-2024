@@ -1,16 +1,14 @@
-import axios from "axios"
-
-const baseUrl = 'http://localhost:3001/api/comments'
+import axios from 'axios';
+const baseUrl = '/api/comments';
 
 const getAll = async () => {
-    const response = await axios.get(baseUrl)
-    return response.data
-}
-
-const addComment = async (id, content) => {
-    console.log(id)
-    const response = await axios.post(`/api/comments/${id}`, { content: content });
-    return response.data;
+    const res = await axios.get(baseUrl);
+    return res.data;
 };
 
-export default { getAll, addComment }
+const addComment = async (blogId, comment) => {
+    const res = await axios.post(`${baseUrl}/${blogId}`, comment);
+    return res.data;
+};
+
+export default { getAll, addComment };

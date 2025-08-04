@@ -39,10 +39,11 @@ export const updateBlog = createAsyncThunk(
 export const addNewComment = createAsyncThunk(
     'blogs/addNewComment',
     async ({ blogId, content }) => {
-        const newComment = await commentsService.addComment(blogId, { content });
-        return { blogId, comment: newComment };
+        const savedComment = await commentsService.addComment(blogId, { content });
+        return { blogId, comment: savedComment };
     }
 );
+
 
 const blogsSlice = createSlice({
     name: 'blogs',
@@ -67,10 +68,14 @@ const blogsSlice = createSlice({
                 );
             })
             .addCase(addNewComment.fulfilled, (state, action) => {
-                return state.map((blog) => {
-                    return blog.id === action.payload.id ? action.payload : blog
-                })
+                const { blogId, comment } = action.payload;
+                return state.map(blog =>
+                    blog.id === blogId
+                        ? { ...blog, comments: [...(blog.comments || []), comment] }
+                        : blog
+                );
             })
+
     }
 });
 
