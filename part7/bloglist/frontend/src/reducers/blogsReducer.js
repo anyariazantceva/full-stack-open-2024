@@ -1,4 +1,5 @@
 import blogService from "../services/blogs";
+import commentsService from "../services/comments"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Async thunks
@@ -33,6 +34,16 @@ export const updateBlog = createAsyncThunk(
     }
 );
 
+
+
+export const addNewComment = createAsyncThunk(
+    'blogs/addNewComment',
+    async ({ blogId, content }) => {
+        const newComment = await commentsService.addComment(blogId, { content });
+        return { blogId, comment: newComment };
+    }
+);
+
 const blogsSlice = createSlice({
     name: 'blogs',
     initialState: [],
@@ -54,7 +65,12 @@ const blogsSlice = createSlice({
                 return state.map((blog) =>
                     blog.id === action.payload.id ? action.payload : blog
                 );
-            });
+            })
+            .addCase(addNewComment.fulfilled, (state, action) => {
+                return state.map((blog) => {
+                    return blog.id === action.payload.id ? action.payload : blog
+                })
+            })
     }
 });
 

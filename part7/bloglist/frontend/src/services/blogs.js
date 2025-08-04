@@ -22,6 +22,7 @@ const create = async (newObject) => {
   return response.data
 }
 
+
 const update = async (newObject, blogId) => {
   const config = {
     headers: { Authorization: token },
