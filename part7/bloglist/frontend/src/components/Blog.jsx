@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import commentsService from "../services/comments";
 import { addNewComment } from "../reducers/blogsReducer";
 import { useDispatch } from "react-redux";
+import { Form, Button } from "react-bootstrap";
 
 const Blog = ({ blogs, likeBlog, removeBlog }) => {
   const id = useParams().id;
@@ -49,21 +50,23 @@ const Blog = ({ blogs, likeBlog, removeBlog }) => {
         <a href={blog.url}>{blog.url}</a>
       </p>
       <p>
-        {blog.likes} likes <button onClick={() => likeBlog(blog)}>like</button>
+        {blog.likes} likes <Button onClick={() => likeBlog(blog)}>like</Button>
       </p>
       <p>added by {blog.user?.name || "unknown"}</p>
-      <button onClick={() => removeBlog(blog)}>remove</button>
+      <Button onClick={() => removeBlog(blog)}>remove</Button>
 
       <h3>comments</h3>
-      <form onSubmit={createComment}>
-        <input
-          type="text"
-          placeholder="Add a comment"
-          value={comment}
-          onChange={(e) => setCommentValue(e.target.value)}
-        />
-        <button type="submit">add comment</button>
-      </form>
+      <Form onSubmit={createComment}>
+        <Form.Group>
+          <Form.Control
+            type="text"
+            placeholder="Add a comment"
+            value={comment}
+            onChange={(e) => setCommentValue(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+        <Button type="submit">add comment</Button>
+      </Form>
 
       {comments.length === 0 ? (
         <p className="text-gray-500">No comments yet</p>

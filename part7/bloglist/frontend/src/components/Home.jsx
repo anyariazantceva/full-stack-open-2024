@@ -12,7 +12,7 @@ const Home = ({
   blogFormRef,
 }) => {
   return (
-    <div>
+    <div className="container">
       <Notification notification={notification} />
       {user === null ? (
         <LoginForm handleLogin={handleLogin} />

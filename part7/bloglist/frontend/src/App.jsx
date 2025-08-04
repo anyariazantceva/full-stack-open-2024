@@ -19,6 +19,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Blog from "./components/Blog";
 import UserBlogs from "./components/UserBlogs";
 import Users from "./components/Users";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -101,20 +102,26 @@ const App = () => {
 
   return (
     <Router>
-      <div style={{ padding: 10, marginBottom: 5, backgroundColor: "grey" }}>
-        <Link to={"/blogs"}>
-          <span style={{ paddingRight: 10 }}>blogs</span>
-        </Link>
-        <Link to={"/users"}>
-          <span style={{ paddingRight: 10 }}>users</span>
-        </Link>
-        {user && (
-          <>
-            <span>{user.name} logged in</span>
-            <button onClick={handleLogout}>logout</button>
-          </>
-        )}
-      </div>
+      <Navbar expand="lg" className="bg-body-tertiary">
+        <Nav>
+          <Nav.Item>
+            <Link to={"/blogs"}>
+              <span style={{ paddingRight: 10 }}>blogs</span>
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to={"/users"}>
+              <span style={{ paddingRight: 10 }}>users</span>
+            </Link>
+          </Nav.Item>
+          {user && (
+            <>
+              <div>{user.name} logged in</div>
+              <Button onClick={handleLogout}>logout</Button>
+            </>
+          )}
+        </Nav>
+      </Navbar>
 
       <h2>Blog app</h2>
 

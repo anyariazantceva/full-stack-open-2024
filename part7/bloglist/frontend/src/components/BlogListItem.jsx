@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
+import { ListGroup } from "react-bootstrap";
 
 const BlogListItem = ({ blog }) => {
   return (
-    <div style={{ border: "1px solid", padding: 10, marginBottom: 5 }}>
+    <ListGroup.Item>
       <strong>
         <Link to={`/blogs/${blog.id}`}>
           {blog.title} {blog.author}
         </Link>
       </strong>
-    </div>
+    </ListGroup.Item>
   );
 };
 
