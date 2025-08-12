@@ -5,6 +5,13 @@ import NewBook from "./components/NewBook";
 
 const App = () => {
   const [page, setPage] = useState("authors");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const notify = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 10000);
+  };
 
   return (
     <div>
@@ -13,14 +20,22 @@ const App = () => {
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
       </div>
+      <Notify errorMessage={errorMessage}></Notify>
 
       <Authors show={page === "authors"} />
 
-      <Books show={page === "books"} />
+      <Books show={page === "books"} setError={notify} />
 
       <NewBook show={page === "add"} />
     </div>
   );
+};
+
+const Notify = ({ errorMessage }) => {
+  if (!errorMessage) {
+    return null;
+  }
+  return <div style={{ color: "red" }}>{errorMessage}</div>;
 };
 
 export default App;
