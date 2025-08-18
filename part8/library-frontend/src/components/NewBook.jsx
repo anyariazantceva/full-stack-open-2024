@@ -5,7 +5,7 @@ import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from "../queries";
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [published, setPublished] = useState(null);
+  const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
   const [addBook] = useMutation(ADD_BOOK, {
