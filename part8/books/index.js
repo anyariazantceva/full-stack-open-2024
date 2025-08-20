@@ -89,7 +89,7 @@ const resolvers = {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: args.name,
-                        error
+                        error: error.message
                     }
                 })
             }
@@ -117,7 +117,7 @@ const resolvers = {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: args.title,
-                        error,
+                        error: error.message
                     },
                 });
             }
@@ -133,7 +133,7 @@ const resolvers = {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: args.name,
-                        error
+                        error: error.message
                     }
                 })
             }
