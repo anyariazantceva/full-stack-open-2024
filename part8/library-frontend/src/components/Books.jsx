@@ -1,33 +1,38 @@
-import { gql, useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
-import { useMemo } from "react";
+import { useQuery } from "@apollo/client";
+import { ALL_BOOKS, ME } from "../queries";
 import { useState } from "react";
 
-const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
+const Books = ({ show }) => {
   const [activeGenre, setActiveGenre] = useState(null);
 
-  if (!props.show) {
-    return null;
-  }
+  const userResult = useQuery(ME);
+  const favouriteGenre = userResult.data?.me?.favouriteGenre ?? null;
 
-  if (result.loading) {
+  const booksResult = useQuery(ALL_BOOKS, {
+    variables: { genre: activeGenre || favouriteGenre },
+  });
+
+  const allBooksResult = useQuery(ALL_BOOKS, { variables: { genre: null } });
+
+  if (!show) return null;
+  if (userResult.loading || booksResult.loading || allBooksResult.loading) {
     return <div>loading...</div>;
   }
 
+  const books = booksResult.data.allBooks;
   const allGenres = [
-    ...new Set(result.data.allBooks.flatMap((book) => book.genres)),
+    ...new Set(allBooksResult.data.allBooks.flatMap((book) => book.genres)),
   ];
-
-  const booksToShow = activeGenre
-    ? result.data.allBooks.filter((b) => b.genres.includes(activeGenre))
-    : result.data.allBooks;
 
   return (
     <div>
       <h2>books</h2>
+      <div>
+        {activeGenre === null && favouriteGenre
+          ? `Showing books in your favourite genre: ${favouriteGenre}`
+          : activeGenre && `Showing books in genre: ${activeGenre}`}
+      </div>
 
-      <p>in genre {activeGenre}</p>
       <table>
         <tbody>
           <tr>
@@ -35,7 +40,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {booksToShow.map((a) => (
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -44,9 +49,17 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+
       <div>
         {allGenres.map((genre) => (
-          <button key={genre} onClick={() => setActiveGenre(genre)}>
+          <button
+            key={genre}
+            onClick={() => setActiveGenre(genre)}
+            style={{
+              fontWeight:
+                genre === (activeGenre || favouriteGenre) ? "bold" : "normal",
+            }}
+          >
             {genre}
           </button>
         ))}

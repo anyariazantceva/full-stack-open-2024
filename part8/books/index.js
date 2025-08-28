@@ -40,6 +40,7 @@ const typeDefs = `
     type User {
         username: String!
         id: ID!
+        favouriteGenre: String
     }
     
     type Token {
@@ -166,6 +167,7 @@ const resolvers = {
             author.born = args.setBornTo;
             try {
                 await author.save()
+                return author
             } catch (error) {
                 throw new GraphQLError('Editing author failed', {
                     extensions: {
