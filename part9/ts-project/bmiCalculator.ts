@@ -1,3 +1,24 @@
+const parseArguments = (args: string[]): { height: number, weight: number } => {
+  if (args.length < 4) {
+    throw new Error('Not enough arguments. Usage: height weight');
+  }
+  if (args.length > 4) {
+    throw new Error('Too many arguments given. Usage: height weight');
+  }
+
+  const height = Number(args[2]);
+  const weight = Number(args[3]);
+
+  if (isNaN(height) || isNaN(weight)) {
+    throw new Error('Provided values were not numbers!');
+  }
+  if (height <= 0 || weight <= 0) {
+    throw new Error('Height and weight must be positive numbers!');
+  }
+
+  return { height, weight };
+};
+
 const calculateBmi = (height: number, weight: number) : string => {
     let heightInMetres = height / 100;
     const bmi = weight / (heightInMetres * heightInMetres);
@@ -13,4 +34,15 @@ const calculateBmi = (height: number, weight: number) : string => {
     
 }
 
-console.log(calculateBmi(180, 74))
+if (require.main === module) {
+  try {
+    const { height, weight } = parseArguments(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (e: unknown) {
+    let errorMessage = 'Error: ';
+    if (e instanceof Error) {
+      errorMessage += e.message;
+    }
+    console.log(errorMessage);
+  }
+}
