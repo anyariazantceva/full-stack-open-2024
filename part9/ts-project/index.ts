@@ -1,7 +1,7 @@
 import express from 'express';
 const app = express();
 import qs from 'qs';
-import { calculateBmi, Result } from './bmiCalculator';
+import { calculateBmi } from './bmiCalculator';
 
 app.set('query parser',
   (str: string) => qs.parse(str, { /* custom options */ }))
