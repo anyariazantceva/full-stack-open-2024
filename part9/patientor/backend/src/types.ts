@@ -1,3 +1,4 @@
+import {z} from 'zod'
 export interface Diagnosis {
     code: string;
     name: string;
